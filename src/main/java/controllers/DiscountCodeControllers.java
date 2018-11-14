@@ -49,20 +49,33 @@ public class DiscountCodeControllers extends HttpServlet {
             String code = request.getParameter("code");
             String taux = request.getParameter("taux");
             List<DiscountCodeEntity> discountEntity = dao.listDiscountCode();
+            request.setAttribute("listDiscountCode", discountEntity);
             
             if(action != null) {
                 if (action.equals("ADD")) {
                     request.setAttribute("code", code);
                     request.setAttribute("taux",taux);
+                    // On verifie que le code saisie n'existe pas deja dans la table sinon erreur
+                    // TODO FINIR <= affichage d'une page blanche si deux fois le meme code
+//                    for (int i = 0; i < discountEntity.size(); i++){
+//                        String codeIpos = discountEntity.get(0).toString();
+//                        if (code.equals(codeIpos)){
+//                            request.setAttribute("code", code);
+//                            request.setAttribute("errorMessage","Erreur code deja dans la base de donnée");
+//                            request.getRequestDispatcher("views/Error.jsp").forward(request, response);
+//                        }
+//                    }
                     dao.addDiscountCode(code, Float.parseFloat(taux));
                     discountEntity = dao.listDiscountCode();
+                    request.setAttribute("listDiscountCode", discountEntity);
                 } else if (action.equals("DELETE")) {
                     request.setAttribute("code",code);
-                    dao.deleteDiscountCode("code");
+                    dao.deleteDiscountCode(code);
                     discountEntity = dao.listDiscountCode();
+                    request.setAttribute("listDiscountCode", discountEntity);
                 }
             }
-            request.setAttribute("listDiscountCode", discountEntity);
+            
             // On continue vers la page JSP sélectionnée
             request.getRequestDispatcher("views/DiscountCodeViews.jsp").forward(request, response);
         } catch (DAOException ex) {

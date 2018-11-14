@@ -48,8 +48,8 @@ public class DAOExtends extends DAO {
 			stmt.setString(1, discountCode);
 			
                         // On execute la requete
-			stmt.executeUpdate();
-
+			stmt.execute();
+                        
 		}  catch (SQLException ex) {
 			Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
 			throw new DAOException(ex.getMessage());

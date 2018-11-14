@@ -26,7 +26,7 @@
                 <%--On fait un formulaire pour y ajouter un code --%>
                 <form method="GET">
                     Code promo :  <input name="code" size="1" maxlength="1" pattern="[A-Z]{1}+" title="Une lettre en MAJUSCULES">
-                    Valeur : <input name="taux" type="number" step="0.01" min="0.0" max="99.99" size="5"><br/>
+                    Valeur : <input name="taux" type="number" step="0.01" min="0.0" max="99.99" size="2"><br/>
                     <input type="hidden" name="action" value="ADD">
                     <input type="submit" value="Ajouter">
                 </form>
