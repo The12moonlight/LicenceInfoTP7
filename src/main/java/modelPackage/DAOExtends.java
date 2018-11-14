@@ -55,6 +55,31 @@ public class DAOExtends extends DAO {
 			throw new DAOException(ex.getMessage());
 		}
 	}
+     
+            /* Update */
+        /** 
+        * Ajoute un code discount
+        * @param discountCode nom du code discount
+        * @param rate valeur du code discount
+        * @return 
+        */   
+        public void updateDiscountCode(String code, float rate) throws SQLException, DAOException {
+          // Requete SQL Paramtetree
+          String sql = "UPDATE DISCOUNT_CODE SET RATE = ? WHERE DISCOUNT_CODE = ?";
+           try (Connection connection = myDataSource.getConnection();
+                 PreparedStatement discountStatement = connection.prepareStatement(sql)  ){
+             // On définit la valeur de paramètre
+             discountStatement.setString(2, code);
+             discountStatement.setFloat(1, rate);
+             
+             // On ajoute le code discount avec une requete
+             discountStatement.execute();
+           } catch (SQLException ex) {
+            Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
+            throw new DAOException(ex.getMessage()); 
+           }
+        }
+        
     /* Add */
     /** 
      * Ajoute un code discount
@@ -65,14 +90,24 @@ public class DAOExtends extends DAO {
     public void addDiscountCode(String discountCode, float rate) throws SQLException, DAOException{
         // Une requête SQL paramétrée
 	 String sql = "INSERT INTO DISCOUNT_CODE(DISCOUNT_CODE, RATE) VALUES(?, ?)";
+         String sqlSelect = "SELECT DISCOUNT_CODE FROM DISCOUNT_CODE WHERE DISCOUNT_CODE = ?";
          try (Connection connection = myDataSource.getConnection();
-                 PreparedStatement discountStatement = connection.prepareStatement(sql)  ){
-             // On définit la valeur de paramètre
-             discountStatement.setString(1, discountCode);
-             discountStatement.setFloat(2, rate);
+                 PreparedStatement discountStatement = connection.prepareStatement(sql);
+                 PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)){
+            
+             selectStatement.setString(1, discountCode);
+             try (ResultSet rs = selectStatement.executeQuery()){
+                 if (rs.next()){
+                     updateDiscountCode(discountCode, rate);
+                 } else {
+                    // On définit la valeur de paramètre de l'add
+                    discountStatement.setString(1, discountCode);
+                    discountStatement.setFloat(2, rate);
+                    // On ajoute le code discount avec une requete
+                    discountStatement.execute();
+                 }
+             }
              
-             // On ajoute le code discount avec une requete
-             discountStatement.execute();
          } catch (SQLException ex) {
             Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
             throw new DAOException(ex.getMessage()); 
